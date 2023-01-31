@@ -31,6 +31,7 @@ export class PointPositionController {
     @Query('name') name: string,
     @Query('moduleId') moduleId: number,
   ) {
+    console.log(current, pageSize, name, moduleId);
     const [list, total] = await this.pointPositionService.findAll(current, pageSize, name, moduleId);
 
     return _RES(1, '查询成功', _PAGINATION(list, total, current, pageSize));

@@ -21,7 +21,7 @@ export class MessageForwarding extends RedundancyField { // 消息转发
 
 
   @Column({ name: 'port_number', nullable: true, comment: '端口号' })
-  portNumber: number; //	端口号
+  portNumber:number; //	端口号
 
 
   @Column({ name: 'username', nullable: true, comment: '用户名' })

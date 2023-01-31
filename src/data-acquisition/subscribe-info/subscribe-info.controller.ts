@@ -52,8 +52,8 @@ export class SubscribeInfoController {
   async remove(@Param('id') id: number) {
     const res = await this.subscribeInfoService.remove(id);
     if (res.affected > 0) { // 影响的行数
-      return _RES(1, '修改成功');
+      return _RES(1, '删除成功');
     }
-    return _RES(0, '修改失败');
+    return _RES(0, '删除失败');
   }
 }

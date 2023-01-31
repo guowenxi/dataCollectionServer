@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { CreateModuleInfoDto } from './dto/create-module-info.dto';
-import { UpdateModuleInfoDto } from './dto/update-module-info.dto';
-import { Brackets, Repository, getManager, EntityManager, getConnection } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ModuleInfo } from './entities/module-info.entity';
-import { AgreementInfo } from '@data-acquisition/agreement-info/entities/agreement-info.entity';
-import { TypeInfo } from '@data-acquisition/type-info/entities/type-info.entity';
-import { PointPosition } from '@data-acquisition/point-position/entities/point-position.entity';
-import { CreateAgreementInfoDto } from '@data-acquisition/agreement-info/dto/create-agreement-info.dto';
-import { UpdateAgreementInfoDto } from '@data-acquisition/agreement-info/dto/update-agreement-info.dto';
+import { Injectable } from "@nestjs/common";
+import { CreateModuleInfoDto } from "./dto/create-module-info.dto";
+import { UpdateModuleInfoDto } from "./dto/update-module-info.dto";
+import { Brackets, Repository, getManager, EntityManager, getConnection } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ModuleInfo } from "./entities/module-info.entity";
+import { AgreementInfo } from "@data-acquisition/agreement-info/entities/agreement-info.entity";
+import { TypeInfo } from "@data-acquisition/type-info/entities/type-info.entity";
+import { PointPosition } from "@data-acquisition/point-position/entities/point-position.entity";
+import { CreateAgreementInfoDto } from "@data-acquisition/agreement-info/dto/create-agreement-info.dto";
+import { UpdateAgreementInfoDto } from "@data-acquisition/agreement-info/dto/update-agreement-info.dto";
 
 @Injectable()
 export class ModuleInfoService {
@@ -19,7 +19,7 @@ export class ModuleInfoService {
     @InjectRepository(AgreementInfo)
     private agreementInfoRepository: Repository<AgreementInfo>,
     @InjectRepository(PointPosition)
-    private pointPositionRepository: Repository<PointPosition>,
+    private pointPositionRepository: Repository<PointPosition>
   ) {
   }
 
@@ -42,15 +42,13 @@ export class ModuleInfoService {
       // console.log((10 / 0));
       await this.agreementInfoRepository.save({
         moduleId: module.id,
-        ...createAgreementInfoDto,
-        code: createModuleInfoDto.agreementCode,
-        name: createModuleInfoDto.agreementName,
+        ...createAgreementInfoDto
       });
 
       // 提交事务：
       await queryRunner.commitTransaction();
       queryRunner.release();
-      return '级联添加成功';
+      return "级联添加成功";
     } catch (err) {
       // 有错误做出回滚更改
       await queryRunner.rollbackTransaction();
@@ -61,29 +59,42 @@ export class ModuleInfoService {
 
   }
 
-   findAll(current: number, pageSize: number, moduleName: string, status: number, agreementCode: number) {
+  findAll(current: number, pageSize: number, moduleName: string, status: number, agreementCode: number) {
 
-    return  this.moduleInfoRepository
-      .createQueryBuilder('moduleInfo')
+    return this.moduleInfoRepository
+      .createQueryBuilder("moduleInfo")
 
-      .leftJoinAndMapOne('moduleInfo.agreementCode', TypeInfo, 'ta', 'moduleInfo.agreementCode=ta.typeCode')
+      .leftJoinAndMapOne("moduleInfo.agreementCode", TypeInfo, "ta", "moduleInfo.agreementCode=ta.typeCode")
 
       .where(
         new Brackets((q) => {
 
           // 模糊查询
           if (moduleName) {
-            q.where('name like :name', { name: `%${moduleName}%` });
+            q.where("name like :name", { name: `%${moduleName}%` });
           }
-          if (status > 0) {
-            q.where('status = :status', { status: status });
-          }
-          if (agreementCode) {
-            q.where('agreement_code = :agreement_code', { agreement_code: agreementCode });
-          }
-        }),
+
+        })
       )
-      .andWhere('ta.typeClass = "agreement_type"')
+      .andWhere(
+        new Brackets((q) => {
+
+          if (status > 0) {
+            q.where("status = :status",{ status: status });
+          }
+
+        })
+      )
+      .andWhere(
+        new Brackets((q) => {
+          // 模糊查询
+          if (agreementCode) {
+            q.where("agreement_code = :agreement_code", { agreement_code: agreementCode });
+          }
+        })
+      )
+
+      .andWhere("ta.typeClass = \"agreement_type\"")
 
 
       // 分页条件
@@ -91,7 +102,7 @@ export class ModuleInfoService {
       .limit(pageSize)
 
       // 数据排序（ASC 正序，DESC 倒序）
-      .orderBy('moduleInfo.createTime', 'DESC')
+      .orderBy("moduleInfo.createTime", "DESC")
       .getManyAndCount();
 
     // console.log(list);
@@ -107,10 +118,10 @@ export class ModuleInfoService {
   findOne(id: number) {
 
     return this.moduleInfoRepository
-      .createQueryBuilder('moduleInfo')
-      .leftJoinAndMapOne('moduleInfo.agreementInfo', AgreementInfo, 'ai', 'moduleInfo.id=ai.moduleId')
-      .leftJoinAndMapMany('moduleInfo.pointPosition', PointPosition, 'pm', 'moduleInfo.id=pm.moduleId')
-      .where('moduleInfo.id = :id', { id: id })
+      .createQueryBuilder("moduleInfo")
+      .leftJoinAndMapOne("moduleInfo.agreementInfo", AgreementInfo, "ai", "moduleInfo.id=ai.moduleId")
+      .leftJoinAndMapMany("moduleInfo.pointPosition", PointPosition, "pm", "moduleInfo.id=pm.moduleId")
+      .where("moduleInfo.id = :id", { id: id })
 
       .getOne();
 
@@ -134,24 +145,26 @@ export class ModuleInfoService {
       // 对此事务执行一些操作：
       await this.moduleInfoRepository.createQueryBuilder(null, queryRunner)
         .update()
-        .set({ name: updateModuleInfoDto.name })
-        .where('id = :id', { id: id })
+        .set({
+          ...updateModuleInfoDto
+        })
+        .where("id = :id", { id: id })
         .execute();
 
 
       await this.agreementInfoRepository.createQueryBuilder(null, queryRunner)
         .update()
         .set({
-          ...updateAgreementInfoDto
+          ...updateAgreementInfoDto,
         })
-        .where('id = :id', { id: id })
+        .where("moduleId = :moduleId", { moduleId: id })
         .execute();
 
       // 提交事务：
       await queryRunner.commitTransaction();
       queryRunner.release();
 
-      return '修改成功';
+      return "修改成功";
     } catch (err) {
       // 有错误做出回滚更改
       await queryRunner.rollbackTransaction();
@@ -166,7 +179,7 @@ export class ModuleInfoService {
   async remove(id: number) {
     const pointPosition = await this.pointPositionRepository.find({ where: { moduleId: id } });
     if (pointPosition.length > 0) {
-      return '当前模块下有点位不能删除';
+      return "当前模块下有点位不能删除";
     }
 
     // 获取连接并创建新的queryRunner
@@ -194,7 +207,7 @@ export class ModuleInfoService {
       await queryRunner.rollbackTransaction();
       queryRunner.release();
 
-      return '删除失败';
+      return "删除失败";
     }
 
 
@@ -229,7 +242,7 @@ export class ModuleInfoService {
       await queryRunner.rollbackTransaction();
       queryRunner.release();
 
-      return '批量失败';
+      return "批量失败";
     }
 
 

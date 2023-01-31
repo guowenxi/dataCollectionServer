@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateInterfaceInfoDto } from './dto/create-interface-info.dto';
-import { UpdateInterfaceInfoDto } from './dto/update-interface-info.dto';
+import { CreateInterfaceInfoDto, CreateInterfaceInfoThirdPartyDto } from "./dto/create-interface-info.dto";
+import { UpdateInterfaceInfoDto, UpdateInterfaceInfoThirdPartyDto } from "./dto/update-interface-info.dto";
 import { TypeInfo } from '@data-acquisition/type-info/entities/type-info.entity';
 import { Brackets, getConnection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,7 +20,10 @@ export class InterfaceInfoService {
   }
 
   create(createInterfaceInfoDto: CreateInterfaceInfoDto) {
-    // @ts-ignore
+    return this.interfaceInfoRepository.insert(createInterfaceInfoDto);
+  }
+
+  createThirdParty(createInterfaceInfoDto: CreateInterfaceInfoThirdPartyDto) {
     return this.interfaceInfoRepository.insert(createInterfaceInfoDto);
   }
 
@@ -40,8 +43,8 @@ export class InterfaceInfoService {
           if (interfaceName) {
             q.where('name like :name', { name: `%${interfaceName}%` });
           }
-          if (interfaceType) {
-            q.where('interfaceInfo.interfaceType = :interfaceType', { interfaceType: interfaceType });
+          if (interfaceType >0) {
+            q.where('interfaceInfo.interfaceType = :interfaceType', { interfaceType: interfaceType===1?interfaceType:0 });
           }
           if (interfaceStatus > 0) {
             q.where('interfaceInfo.interfaceStatus = :interfaceStatus', { interfaceStatus: interfaceStatus });
@@ -74,8 +77,30 @@ export class InterfaceInfoService {
     return this.interfaceInfoRepository.update(id, updateInterfaceInfoDto);
   }
 
+  updateThirdParty(id: number, updateInterfaceInfoDto: UpdateInterfaceInfoThirdPartyDto) {
+    return this.interfaceInfoRepository.update(id, updateInterfaceInfoDto);
+  }
 
-  remove(id: number) {
-    return this.interfaceInfoRepository.update({ id }, { isDelete: 1, deleteTime: new Date() });
+
+  remove(ids: []) {
+
+    const list = ids.map(async (item: any) => {
+      const interfaceInfo = await this.interfaceInfoRepository.findOne({ where: { id: item } });
+      if (interfaceInfo) {
+        const row = await this.interfaceInfoRepository.update({ id: item }, { isDelete: 1, deleteTime: new Date() });
+        if (row.affected > 0) {
+          return item;
+        }
+      }
+    });
+
+    if (list.length === ids.length) {
+      return '删除成功';
+    } else {
+      return '删除失败';
+    }
+
+
+    // return this.interfaceInfoRepository.update({ id }, { isDelete: 1, deleteTime: new Date() });
   }
 }

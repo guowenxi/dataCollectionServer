@@ -29,18 +29,29 @@ export class InterfaceInfo extends RedundancyField { // 接口信息表
   @Column({ name: 'interface_type', nullable: true, comment: '接口类型: 1-第三方平台接口；2-data-acquisition接口' })
   interfaceType: number; // 接口类型
 
-  @Column({ name: 'interface_status', nullable: false, comment: '接口状态', default: 2 })
+  @Column({ name: 'interface_status', nullable: false, comment: '接口状态', default: 0 })
   interfaceStatus: number; // 接口状态
 
   @Column({ name: 'service_ip', nullable: true, comment: '服务ip' })
   serviceIp: string; // 服务ip
 
-  @Column({ name: 'service_port', nullable: true, comment: '服务端口' })
-  servicePort: string; // 服务端口
+  @Column({ name: 'service_port', nullable: false, comment: '服务端口',default:80 })
+  servicePort: number; // 服务端口
 
   @Column({ name: 'json_code', nullable: true, comment: '请求参数(json)' })
   jsonCode: string; // 请求参数(json)
 
   @Column({ name: 'debug_result', nullable: true, select: false, comment: '请求结果' })
   debugResult: string; // 请求结果
+
+
+
+  @Column({ name: "request_method", nullable: false, comment: "请求类型",default:"GET"  })
+  requestMethod: string; //
+
+  @Column({ name: "request_url", nullable: false, comment: "请求URL" })
+  requestUrl: string; //
+
+  @Column({ name: "polling", nullable: false, comment: "轮询(ms)",default:1 })
+  polling: number; //
 }

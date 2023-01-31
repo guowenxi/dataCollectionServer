@@ -10,8 +10,8 @@ export class ModuleInfo extends RedundancyField { // 模块表
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'agreement_code', nullable: true, comment: '通讯协议编号' })
-  agreementCode: number; // 通讯协议编号
+  @Column({ name: 'agreement_code',nullable: true, comment: '协议类型编号' })
+  agreementCode: number; // 协议类型编号
 
   @Column({ nullable: true, comment: '模块名称' })
   name: string; // 模块名称

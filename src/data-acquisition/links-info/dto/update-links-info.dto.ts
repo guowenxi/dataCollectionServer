@@ -1,4 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
-import { CreateLinksInfoDto } from './create-links-info.dto';
+import { CreateLinksInfoDto, CreateLinksInfoMqttDto } from "./create-links-info.dto";
 
 export class UpdateLinksInfoDto extends PartialType(CreateLinksInfoDto) {}
+
+
+export class UpdateLinksInfoMQTTDto extends PartialType(CreateLinksInfoMqttDto) {}

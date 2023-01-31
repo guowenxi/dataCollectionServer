@@ -69,7 +69,7 @@ const _DATA = {
     ]
 }
 const filterIndex = (list,data)=>{
-    return list.indexOf(data);
+    return list.indexOf(data)+1;
 }
 //导入数据进行处理
 export const analysisXlsx = async (moduleId,file) => {
@@ -109,15 +109,15 @@ export const createXlsx = async (list) => {
         sheets.addRow([
             idx+1,
             item['name'],
-            _DATA.pointTypeList[Number(item['pointType']) - 1],
-            _DATA.registerTypeList[Number(item['registerType']) - 1],
+            _DATA.pointTypeList[Number(item['pointType']-1) ],
+            _DATA.registerTypeList[Number(item['registerType']-1)],
             item['convertRatio'],
             item['convertBenchmark'],
             item['address'],
-            _DATA.dataTypeList[Number(item['dataType']) - 1],
+            _DATA.dataTypeList[Number(item['dataType']-1) ],
             item['explain'],
         ], 5);
-        sheets.getCell(`C${2 + idx}`).dataValidation = {
+        sheets.getCell(`C${2+idx}`).dataValidation = {
             type: 'list',
             allowBlank: true,
             formulae: ['"' +

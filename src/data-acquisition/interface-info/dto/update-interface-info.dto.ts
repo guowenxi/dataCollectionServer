@@ -1,7 +1,9 @@
 import { PartialType } from '@nestjs/swagger';
-import { CreateInterfaceInfoDto } from './create-interface-info.dto';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateInterfaceInfoDto, CreateInterfaceInfoThirdPartyDto } from "./create-interface-info.dto";
 
 export class UpdateInterfaceInfoDto extends PartialType(CreateInterfaceInfoDto) {
+  id: number;
+}
+export class UpdateInterfaceInfoThirdPartyDto extends PartialType(CreateInterfaceInfoThirdPartyDto) {
   id: number;
 }

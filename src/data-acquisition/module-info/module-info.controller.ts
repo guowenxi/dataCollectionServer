@@ -100,6 +100,6 @@ export class ModuleInfoController {
     if (res) {
       return error(res);
     }
-    return success('批量删除成功');
+    return success('删除成功');
   }
 }

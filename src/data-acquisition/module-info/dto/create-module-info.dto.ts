@@ -1,25 +1,25 @@
 import { Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Length } from "class-validator";
+import { IsNotEmpty, Length, MaxLength } from "class-validator";
 
 export class CreateModuleInfoDto {
   @PrimaryGeneratedColumn()
   id: number;
 
 
-  agreementCode: number; // 通讯协议编号
-
-  agreementName: string; // 通讯协议名字
-
-  @Length(1, 100, {
-    message: "请输入模块名称"
-  })
+  @Length(1, 20, { message: "模块名称在20个字符之内" })
   name: string; // 模块名称
+
+  @IsNotEmpty({ message: "请选择协议类型" })
+  agreementCode: number; // 协议类型编号
+
+  agreementName: string; // 协议类型名字
+
 
   createTime: Date; // 创建时间
 
   ipAddress: string; // IP地址
 
-  moduleId: number; // 端口号
+  moduleId: number;
 
   portNumber: number; // 端口号
 

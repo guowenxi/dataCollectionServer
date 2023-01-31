@@ -12,6 +12,13 @@ export class UserInfoController {
 
   @Post("/create")
   async create(@Body() createUserInfoDto: CreateUserInfoDto) {
+
+    const userInfo = await this.userInfoService.findByPhone(createUserInfoDto.phone);
+    if (userInfo) {
+      return error('手机号码已存在，换个再试试');
+    }
+
+
     const res = await this.userInfoService.create(createUserInfoDto);
     if (res.identifiers.length > 0) {
       return success("添加成功");

@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserInfoDto } from './dto/create-user-info.dto';
-import { UpdateUserInfoDto } from './dto/update-user-info.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserInfo } from '@data-acquisition/user-info/entities/user-info.entity';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { CreateUserInfoDto } from "./dto/create-user-info.dto";
+import { UpdateUserInfoDto } from "./dto/update-user-info.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserInfo } from "@data-acquisition/user-info/entities/user-info.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class UserInfoService {
@@ -11,7 +11,7 @@ export class UserInfoService {
 
   constructor(
     @InjectRepository(UserInfo)
-    private userInfoRepository: Repository<UserInfo>,
+    private userInfoRepository: Repository<UserInfo>
   ) {
   }
 
@@ -21,7 +21,7 @@ export class UserInfoService {
   }
 
   findByRoleId(roleId: number) {
-    return this.userInfoRepository.find({ where: { roleId: roleId } });
+    return this.userInfoRepository.find({ where: { roleId: roleId, isDelete: 0 } });
   }
 
   findAll() {
@@ -39,4 +39,9 @@ export class UserInfoService {
   remove(id: number) {
     return this.userInfoRepository.update(id, { isDelete: 1, deleteTime: new Date() });
   }
+
+  findByPhone(phone: string) {
+    return this.userInfoRepository.findOne({ where: { phone: phone } });
+  }
+
 }

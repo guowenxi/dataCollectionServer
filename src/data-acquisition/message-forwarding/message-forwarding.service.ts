@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { CreateMessageForwardingDto } from "./dto/create-message-forwarding.dto";
-import { UpdateMessageForwardingDto } from "./dto/update-message-forwarding.dto";
+import {
+  UpdateMessageForwardingMqttDto,
+  UpdateMessageForwardingWsDto
+} from "./dto/update-message-forwarding.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { MessageForwarding } from "@data-acquisition/message-forwarding/entities/message-forwarding.entity";
@@ -28,8 +31,12 @@ export class MessageForwardingService {
     return this.messageForwardingRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateMessageForwardingDto: UpdateMessageForwardingDto) {
-    return this.messageForwardingRepository.update(id, updateMessageForwardingDto);
+  updateWs(id: number, updateMessageForwardingWsDto: UpdateMessageForwardingWsDto) {
+    return this.messageForwardingRepository.update(id, updateMessageForwardingWsDto);
+  }
+
+  updateMqtt(id: number, updateMessageForwardingMqttDto: UpdateMessageForwardingMqttDto) {
+    return this.messageForwardingRepository.update(id, updateMessageForwardingMqttDto);
   }
 
   remove(id: number) {

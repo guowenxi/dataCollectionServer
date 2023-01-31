@@ -24,7 +24,7 @@ export class LinksInfo extends RedundancyField { // 连接信息
   ipAddress: string; //	IP地址
 
   @Column({ name: 'port_number', nullable: true, comment: '端口号' })
-  portNumber: string; //	端口号
+  portNumber: number; //	端口号
 
   @Column({ name: 'links_path', nullable: true, comment: '挂载目录' })
   linksPath: string; // 挂载目录

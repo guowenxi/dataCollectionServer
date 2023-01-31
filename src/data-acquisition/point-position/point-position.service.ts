@@ -35,10 +35,16 @@ export class PointPositionService {
       .where(
         new Brackets((q) => {
           if (name) {
-            q.where('name like :name', { name: `%${name}%` });
+            q.where("pointPosition.name like :name", { name: `%${name}%` });
           }
+
+        }),
+      )
+      // 模糊查询
+      .andWhere(
+        new Brackets((q) => {
           if (moduleId) {
-            q.where('module_id = :module_id', { module_id: moduleId });
+            q.where('pointPosition.module_id = :module_id', { module_id: moduleId });
           }
         }),
       )
@@ -85,7 +91,7 @@ export class PointPositionService {
   async pointPositionCount(list: any) {
     let datas = [];
     for (let i = 0; i < list.length; i++) {
-      const pointPositionCount = await this.pointPositionRepository.query(`SELECT COUNT( module_id ) AS 'pointPositionCount' FROM point_position WHERE module_id = ${list[i].id}`);
+      const pointPositionCount = await this.pointPositionRepository.query(`SELECT COUNT( module_id ) AS 'pointPositionCount' FROM point_position WHERE module_id = ${list[i].id} AND delete_time IS NULL`);
       datas.push({ ...list[i], ...pointPositionCount[0] });
     }
     return datas;
